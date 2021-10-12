@@ -1,0 +1,40 @@
+<aura:component controller="Pagination" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+ 
+    <aura:attribute name="pageCounterInfo" type="Pagination" />
+    
+   
+    <aura:handler event="c:pageChangeEvt" action="{!c.pageChange}" />
+    
+   
+    <aura:handler event="c:pageTotalChange" action="{!c.recordCounterChange}" />
+    
+    <aura:attribute name="currnetPagesCount" type="String" default="5" />
+    
+     
+      <!--   <div style="left:-550px"> -->
+             <footer class="pageFooter">
+               
+        <div class="slds-global-header slds-grid slds-grid_align-spread">
+           
+           <!-- <div class="slds-button-group" role="group" style="margin-left:78%;position:fixed;">-->
+<div style="left:150px">               
+                 <lightning:button label="First" variant="border" disabled="{!v.pageCounterInfo.currentPageNumber == 1}" onclick="{!c.onFirst}"/>
+                <lightning:buttonIcon iconName="utility:left" disabled="{!v.pageCounterInfo.currentPageNumber == 1}" variant="border" alternativeText="Left" iconClass="dark" onclick="{!c.goPreviousPage}" />
+                
+               
+                <aura:iteration items="{!v.pageCounterInfo.pageCounter}" var="pgn">
+                    <c:PageCount pageNumber="{!pgn}" currentPageNumber="{!v.pageCounterInfo.currentPageNumber}" currnetPagesCount="{!v.currnetPagesCount}" />
+                </aura:iteration>
+               
+                
+                <lightning:buttonIcon iconName="utility:right" variant="border" alternativeText="Right" iconClass="dark" onclick="{!c.goNextPage}" disabled="{!v.pageCounterInfo.currentPageNumber == v.pageCounterInfo.totalPages}" />
+                  <lightning:button  label="Last" variant="border" disabled="{!v.pageCounterInfo.currentPageNumber == v.pageCounterInfo.totalPages}" onclick="{!c.onLast}"/>
+            </div>
+        </div>
+                 </footer> 
+           
+ 
+</aura:component>
