@@ -1,0 +1,90 @@
+public with sharing class Pagination {
+      
+    @AuraEnabled
+    public static List<Account> getAllRecords(String pageNumber,String currnetPagesCount){
+        String accountQuery = 'SELECT Id,Name,Type,Industry,Rating,BillingCity FROM Account ORDER BY Name LIMIT '+currnetPagesCount+' OFFSET ';
+        if(String.isBlank(pageNumber) || Integer.valueOf(pageNumber) == 1){
+            accountQuery = accountQuery + ' 0'; 
+            System.debug('Account Query '+accountQuery);
+        }else{
+            //logic of offset
+            accountQuery = accountQuery + String.valueOf((Integer.valueOf(pageNumber)-1)*Integer.valueOf(currnetPagesCount));
+            System.debug('Account Query 2'+accountQuery);
+        }
+        return Database.query(accountQuery);
+    }
+    
+    /* When total number of records to display changes provide 
+       footer with new set of page counter info to display */
+    
+    @AuraEnabled
+    public static PageInfo getPageCountInfo(String pageCountInfo){
+        
+        Integer currentListCount = pageCountInfo != null && pageCountInfo != '' ? Integer.valueOf(pageCountInfo) : 5;
+        
+        PageInfo pgn = new PageInfo();        
+        pgn.totalPages = ([SELECT COUNT() FROM Account]/(currentListCount))+1; 
+        pgn.currentPageNumber = 1;
+        List<Integer> cnter = new List<Integer>(); //counter
+        for(Integer loop_var = 0;loop_var < pgn.totalPages;loop_var++){
+            cnter.add(loop_var+1);
+            if((loop_var+1) == 4)
+                break;
+        }
+        if(pgn.totalPages > 4)
+            cnter.add(pgn.totalPages);
+        pgn.pageCounter = cnter;
+        
+        return pgn;        
+    }
+    
+    /*When page count change or next or previous button is clicked
+      provide footer with new set of page counter info to display */
+    
+    @AuraEnabled
+    public static PageInfo getPageCountChange(String pageNumber,String currnetPagesCount,String totalPages){
+        PageInfo pgn = new PageInfo();
+        pgn.currentPageNumber = Integer.valueOf(pageNumber);
+        pgn.totalPages = Integer.valueOf(totalPages);
+        
+        List<Integer> cnt = new List<Integer>();
+        
+        if((Integer.valueOf(pageNumber)+2) < Integer.valueOf(totalPages) && Integer.valueOf(pageNumber) != 1){
+            for(Integer loop_var = (Integer.valueOf(pageNumber)-1);loop_var < (Integer.valueOf(pageNumber)+3);loop_var++){
+                cnt.add(loop_var);
+            }
+            cnt.add(pgn.totalPages);
+            
+        }else if(Integer.valueOf(pageNumber) == 1){
+            for(Integer loop_var = 1;loop_var < 5;loop_var++){
+                cnt.add(loop_var);
+            }
+            cnt.add(pgn.totalPages);
+        }else{
+            if(Integer.valueOf(currnetPagesCount) >= pgn.totalPages){
+                for(Integer loop_var = 1;loop_var < (pgn.totalPages+1);loop_var++){
+                    cnt.add(loop_var);
+                }
+            }else{
+                for(Integer loop_var = (pgn.totalPages-4);loop_var < (pgn.totalPages+1);loop_var++){
+                    cnt.add(loop_var);
+                }
+            }
+        }
+        pgn.pageCounter = cnt;
+        
+        return pgn;
+    }
+    public class PageInfo {
+        @AuraEnabled
+        public Integer currentPageNumber {get;set;}
+        
+        @AuraEnabled
+        public Integer totalPages {get;set;}
+        
+        @AuraEnabled
+        public List<Integer> pageCounter {get;set;}
+        
+    }
+    
+}
