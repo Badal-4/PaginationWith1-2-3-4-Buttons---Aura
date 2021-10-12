@@ -1,0 +1,15 @@
+({
+	
+	openthePage : function(component, event, helper) {
+
+	    var myEvent = $A.get("e.c:pageChangeEvt");
+        var pageNumber = component.get("v.pageNumber");
+
+        myEvent.setParams({
+            "pageNumber": pageNumber,
+            "currnetPagesCount": component.get("v.currnetPagesCount")
+        });
+
+        myEvent.fire();
+	}
+})
