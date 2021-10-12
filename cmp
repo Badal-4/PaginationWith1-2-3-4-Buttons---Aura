@@ -1,0 +1,81 @@
+<aura:component controller="Pagination" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="pageNumber" type="String" default="1" />
+    <aura:attribute name="currentPagesCount" type="String" default="5" />
+    <aura:attribute name="accounts" type="Account[]" />
+    
+    <aura:handler event="c:pageChangeEvt" action="{!c.pageChange}" />
+    
+    <aura:handler event="c:pageTotalChange" action="{!c.recordCounterChange}" />
+    
+   
+    <aura:registerEvent name="pagesCountChange" type="c:pageTotalChange"  />
+  
+    <aura:attribute name="pageNumber1" type="String"/>
+    <aura:attribute name="currentPageNumber" type="String"/>
+    <aura:attribute name="currnetPagesCount" type="String"/>
+    <aura:registerEvent name="goToPage" type="c:pageChangeEvt"/>     
+    
+    <header class="slds-global-header_container">
+        <div class="slds-global-header slds-grid slds-grid_align-spread">
+            <div class="slds-global-header__item">
+                <legend class="slds-form-element__label slds-text-title_caps">Pagination</legend>
+            </div>            
+            
+            <div class="slds-global-header__item" style="width:12%;">
+                <div class="slds-form slds-form_horizontal">
+                    <lightning:select name="selectItem" aura:id="selectItem" label="Records" variant="label-hidden" onchange="{!c.changeRecordNumber}">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                    </lightning:select>
+                </div>
+            </div>            
+        </div>
+    </header>    
+    
+    <table class="slds-table slds-table--bordered slds-table--cell-buffer" style="margin-top:50px;">
+        <thead>
+            <tr class="slds-text-heading--label">
+                <th scope="col">
+                    <div class="slds-truncate" title="Account Name">Account Name</div>
+                </th>
+                <th scope="col">
+                    <div class="slds-truncate" title="Account Type">Account Type</div>
+                </th>
+                <th scope="col">
+                    <div class="slds-truncate" title="Industry">Industry</div>
+                </th>
+                <th scope="col">
+                    <div class="slds-truncate" title="City">City</div>
+                </th>
+                <th scope="col">
+                    <div class="slds-truncate" title="Rating">Rating</div>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <aura:iteration items="{!v.accounts}" var="acc">
+                <tr>
+                    <th scope="row">
+                        <div class="slds-truncate" title="Account Name">{!acc.Name}</div>
+                    </th>
+                    <th scope="row">
+                        <div class="slds-truncate" title="Account Type">{!acc.Type}</div>
+                    </th>
+                    <th scope="row">
+                        <div class="slds-truncate" title="Industry">{!acc.Industry}</div>
+                    </th>
+                    <th scope="row">
+                        <div class="slds-truncate" title="City">{!acc.BillingCity}</div>
+                    </th>
+                    <th scope="row">
+                        <div class="slds-truncate" title="Rating">{!acc.Rating}</div>
+                    </th>
+                </tr>
+            </aura:iteration>
+        </tbody>     
+           <c:pageFooter/>
+    </table>   
+    
+</aura:component>
